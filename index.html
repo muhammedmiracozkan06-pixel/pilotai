@@ -11,6 +11,11 @@
     <div id="app-container">
         <header>
             <div class="logo">Pilot AI</div>
+            <select id="model-select">
+                <option value="openai/gpt-oss-safeguard-20b">GPT 20B </option>
+                <option value="qwen/qwen3-32b">Qwen3 </option>
+                <option value="groq/compound">groq compound </option>
+            </select>
             <div class="status-dot"></div>
         </header>
 
@@ -20,7 +25,7 @@
 
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Ask pilot...">
-            <button id="send-btn">GÖNDER</button>
+            <button id="send-btn">SEND</button>
         </div>
     </div>
 
