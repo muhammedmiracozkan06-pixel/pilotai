@@ -1,24 +1,21 @@
-// GOOGLE AUTH FONKSİYONLARI
+// GOOGLE AUTH İŞLEMLERİ
 function handleCredentialResponse(response) {
-    // Google verisini çöz
     const responsePayload = decodeJwtResponse(response.credential);
     
-    // 1. Siyah ekranı kaldır
+    // 1. Giriş ekranını kaldır
     const overlay = document.getElementById('login-overlay');
     overlay.style.opacity = '0';
-    setTimeout(() => overlay.style.display = 'none', 500); // Yumuşak geçişle kapat
+    setTimeout(() => overlay.style.display = 'none', 500);
 
-    // 2. Sağ üstteki profil bilgilerini doldur ve göster
-    const userInfo = document.getElementById('user-info');
-    const userNameSpan = document.getElementById('user-name');
-    const userPicImg = document.getElementById('user-pic');
-
-    userNameSpan.innerText = responsePayload.given_name; // Sadece ilk adın
-    userPicImg.src = responsePayload.picture; // Profil fotoğrafın
-    userInfo.style.display = 'flex'; // Görünür yap
+    // 2. Profil bilgilerini üst bara ekle
+    document.getElementById('user-name').innerText = responsePayload.given_name;
+    document.getElementById('user-pic').src = responsePayload.picture;
+    document.getElementById('user-info').style.display = 'flex';
 
     window.userName = responsePayload.given_name;
-    console.log("Hoş geldin " + window.userName);
+
+    // 3. İlk selamlama mesajını ekle
+    addMessage("Selam " + window.userName + "! Oturumun başarıyla açıldı. Bugün ne üzerine çalışıyoruz? ✨", 'ai');
 }
 
 function decodeJwtResponse(token) {
@@ -30,7 +27,7 @@ function decodeJwtResponse(token) {
     return JSON.parse(jsonPayload);
 }
 
-// API AYARLARI (Geri kalan her şey aynı kalsın)
+// API AYARLARI
 const GROQ_API_KEY = "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";
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -52,7 +49,7 @@ async function getAIResponse(prompt) {
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName || "Mirac") + ". Dilleri düzgün konuş sen wind developers tarafından geliştirildin." 
+                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName || "Mirac") + ". Dilleri düzgün konuş ve arkadaş canlısı ol. Wind Developers tarafından geliştirildin." 
                     },
                     { role: "user", content: prompt }
                 ],
@@ -62,19 +59,22 @@ async function getAIResponse(prompt) {
         const data = await response.json();
         return data.choices[0].message.content;
     } catch (error) {
-        return "Network error!";
+        return "Network error! Lütfen bağlantını kontrol et kanka.";
     }
 }
 
 async function handleSend() {
     const text = userInput.value.trim();
     if (!text) return;
+
     addMessage(text, 'user');
     userInput.value = '';
+
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'ai-msg';
     loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
+    
     const response = await getAIResponse(text);
     loadingDiv.innerText = response;
     chatWindow.scrollTop = chatWindow.scrollHeight;
