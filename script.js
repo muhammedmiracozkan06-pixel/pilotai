@@ -1,3 +1,5 @@
+// Wind Developers - Pilot AI 🚀
+
 // GOOGLE AUTH OPERATIONS
 function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
@@ -15,7 +17,7 @@ function handleCredentialResponse(response) {
     window.userName = responsePayload.given_name;
 
     // 3. Add initial welcome message
-    addMessage("Hello " + window.userName + "! Login successful. How can I help you today? ✨", 'ai');
+    addMessage("Merhaba " + window.userName + "! Giriş başarılı. Sana nasıl yardımcı olabilirim bugün? ✨", 'ai');
 }
 
 function decodeJwtResponse(token) {
@@ -33,10 +35,12 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 const modelSelect = document.getElementById('model-select');
 
+// Kilit Değişkeni (Çift tıklamayı engeller)
+let isSending = false;
+
 // SECURE API CALL (Serverless)
 async function getAIResponse(prompt) {
     try {
-        // Artik direkt Groq'a degil, kendi gizli '/api/chat' yolumuza gidiyoruz!
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -45,26 +49,33 @@ async function getAIResponse(prompt) {
             body: JSON.stringify({
                 model: modelSelect.value, 
                 prompt: prompt,
-                userName: window.userName || "User"
+                userName: window.userName || "Mirac"
             })
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('API error');
+            // Backend'den gelen detaylı hatayı fırlat
+            throw new Error(data.error || 'API error');
         }
 
-        const data = await response.json();
         return data.choices[0].message.content;
     } catch (error) {
-        console.error("Error:", error);
-        return "Network error! Please check your connection.";
+        console.error("Hata Detayı:", error);
+        return "Bağlantı hatası kankiş! Lütfen internetini veya Vercel ayarlarını kontrol et. Hata: " + error.message;
     }
 }
 
 // Send Function
 async function handleSend() {
     const text = userInput.value.trim();
-    if (!text) return;
+    
+    // Boş mesajı veya işlem devam ederken basılmasını engelle
+    if (!text || isSending) return;
+
+    isSending = true; // Kilidi kapat
+    sendBtn.disabled = true; // Butonu dondur
 
     addMessage(text, 'user');
     userInput.value = '';
@@ -73,19 +84,28 @@ async function handleSend() {
     loadingDiv.className = 'ai-msg';
     loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
     
     const response = await getAIResponse(text);
+    
     loadingDiv.innerText = response;
     chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    isSending = false; // Kilidi aç
+    sendBtn.disabled = false; // Butonu aktif et
 }
 
 function addMessage(text, role) {
     const msgDiv = document.createElement('div');
+    // Senin CSS sınıflarına göre ayarlandı
     msgDiv.className = role === 'user' ? 'user-msg' : 'ai-msg';
     msgDiv.innerText = text;
     chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+// Olay Dinleyiciler
 sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+userInput.addEventListener('keypress', (e) => { 
+    if (e.key === 'Enter') handleSend(); 
+});
