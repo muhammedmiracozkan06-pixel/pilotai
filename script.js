@@ -1,5 +1,3 @@
-// Wind Developers - Pilot AI 🚀
-
 // GOOGLE AUTH OPERATIONS
 function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
@@ -17,7 +15,7 @@ function handleCredentialResponse(response) {
     window.userName = responsePayload.given_name;
 
     // 3. Add initial welcome message
-    addMessage("Merhaba " + window.userName + "! Giriş başarılı. Sana nasıl yardımcı olabilirim bugün? ✨", 'ai');
+    addMessage("Hello " + window.userName + "! Login successful. How can I help you today?", 'ai');
 }
 
 function decodeJwtResponse(token) {
@@ -35,7 +33,7 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 const modelSelect = document.getElementById('model-select');
 
-// Kilit Değişkeni (Çift tıklamayı engeller)
+// Request state control
 let isSending = false;
 
 // SECURE API CALL (Serverless)
@@ -49,21 +47,20 @@ async function getAIResponse(prompt) {
             body: JSON.stringify({
                 model: modelSelect.value, 
                 prompt: prompt,
-                userName: window.userName || "Mirac"
+                userName: window.userName || "User"
             })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            // Backend'den gelen detaylı hatayı fırlat
-            throw new Error(data.error || 'API error');
+            throw new Error(data.error || 'API Error');
         }
 
         return data.choices[0].message.content;
     } catch (error) {
-        console.error("Hata Detayı:", error);
-        return "Bağlantı hatası kankiş! Lütfen internetini veya Vercel ayarlarını kontrol et. Hata: " + error.message;
+        console.error("Technical Error:", error);
+        return "Connection error: " + error.message;
     }
 }
 
@@ -71,11 +68,11 @@ async function getAIResponse(prompt) {
 async function handleSend() {
     const text = userInput.value.trim();
     
-    // Boş mesajı veya işlem devam ederken basılmasını engelle
+    // Prevention of empty messages and multiple simultaneous requests
     if (!text || isSending) return;
 
-    isSending = true; // Kilidi kapat
-    sendBtn.disabled = true; // Butonu dondur
+    isSending = true;
+    sendBtn.disabled = true;
 
     addMessage(text, 'user');
     userInput.value = '';
@@ -91,20 +88,19 @@ async function handleSend() {
     loadingDiv.innerText = response;
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
-    isSending = false; // Kilidi aç
-    sendBtn.disabled = false; // Butonu aktif et
+    isSending = false;
+    sendBtn.disabled = false;
 }
 
 function addMessage(text, role) {
     const msgDiv = document.createElement('div');
-    // Senin CSS sınıflarına göre ayarlandı
     msgDiv.className = role === 'user' ? 'user-msg' : 'ai-msg';
     msgDiv.innerText = text;
     chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Olay Dinleyiciler
+// Event Listeners
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keypress', (e) => { 
     if (e.key === 'Enter') handleSend(); 
