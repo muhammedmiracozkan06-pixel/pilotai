@@ -1,13 +1,24 @@
-// GOOGLE AUTH FONKSİYONLARI (Giriş yapınca ekranın kapanması için)
+// GOOGLE AUTH FONKSİYONLARI
 function handleCredentialResponse(response) {
+    // Google verisini çöz
     const responsePayload = decodeJwtResponse(response.credential);
-    console.log("Giriş Başarılı: " + responsePayload.name);
     
-    // Giriş ekranını gizle
-    document.getElementById('login-overlay').style.display = 'none';
-    
-    // İstersen kullanıcının adını bir değişkene atabilirsin
+    // 1. Siyah ekranı kaldır
+    const overlay = document.getElementById('login-overlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.style.display = 'none', 500); // Yumuşak geçişle kapat
+
+    // 2. Sağ üstteki profil bilgilerini doldur ve göster
+    const userInfo = document.getElementById('user-info');
+    const userNameSpan = document.getElementById('user-name');
+    const userPicImg = document.getElementById('user-pic');
+
+    userNameSpan.innerText = responsePayload.given_name; // Sadece ilk adın
+    userPicImg.src = responsePayload.picture; // Profil fotoğrafın
+    userInfo.style.display = 'flex'; // Görünür yap
+
     window.userName = responsePayload.given_name;
+    console.log("Hoş geldin " + window.userName);
 }
 
 function decodeJwtResponse(token) {
@@ -19,14 +30,14 @@ function decodeJwtResponse(token) {
     return JSON.parse(jsonPayload);
 }
 
-// API AYARLARI
-const GROQ_API_KEY = "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"; // Kendi key'ini buraya koy kanka
+// API AYARLARI (Geri kalan her şey aynı kalsın)
+const GROQ_API_KEY = "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";
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const chatWindow = document.getElementById('chat-window');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
-const modelSelect = document.getElementById('model-select'); // Seçim kutusunu tanımladık
+const modelSelect = document.getElementById('model-select');
 
 async function getAIResponse(prompt) {
     try {
@@ -41,14 +52,13 @@ async function getAIResponse(prompt) {
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın. Dilleri düzgün konuş sen wind developers tarafından geliştirildin." 
+                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName || "Mirac") + ". Dilleri düzgün konuş sen wind developers tarafından geliştirildin." 
                     },
                     { role: "user", content: prompt }
                 ],
                 temperature: 0.7
             })
         });
-
         const data = await response.json();
         return data.choices[0].message.content;
     } catch (error) {
@@ -56,19 +66,15 @@ async function getAIResponse(prompt) {
     }
 }
 
-// Gönderme Fonksiyonu
 async function handleSend() {
     const text = userInput.value.trim();
     if (!text) return;
-
     addMessage(text, 'user');
     userInput.value = '';
-
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'ai-msg';
     loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
-    
     const response = await getAIResponse(text);
     loadingDiv.innerText = response;
     chatWindow.scrollTop = chatWindow.scrollHeight;
