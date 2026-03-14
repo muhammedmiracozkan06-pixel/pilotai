@@ -15,7 +15,7 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gemma2-9b-it", // En güncel ve hızlı model
+                model: "openai/gpt-oss-safeguard-20b", // En güncel ve hızlı model
                 messages: [
                     { 
                         role: "system", 
