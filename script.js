@@ -1,10 +1,11 @@
 // API AYARLARI
-const GROQ_API_KEY = "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".trim(); 
+const GROQ_API_KEY = "BURAYA_API_KEYINI_YAPISTIR"; // Kendi key'ini buraya koy kanka
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const chatWindow = document.getElementById('chat-window');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const modelSelect = document.getElementById('model-select'); // Seçim kutusunu tanımladık
 
 async function getAIResponse(prompt) {
     try {
@@ -15,54 +16,40 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "openai/gpt-oss-safeguard-20b", // En güncel ve hızlı model
+                // ARTIK MODELİ BURADAN OKUYOR:
+                model: modelSelect.value, 
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın.  enerjik ve bol emoji kullanan bir asistansın. Kullanıcının istediği dilde kusursuz şekilde konuş. sen wind developers  tarafından geliştirildin türkçeyi kusursuz konuş cevabını göndermeden önce mesajını 3 kere kontrol et ve hataları düzelt kullanıcı ne isterse yap" 
+                        content: "Sen Pilot AI'sın. Dilleri düzgün konuş sen wind developers tarafından geliştirildin." 
                     },
-                    { 
-                        role: "user", 
-                        content: prompt 
-                    }
+                    { role: "user", content: prompt }
                 ],
-                temperature: 0.7,
-                max_tokens: 1024
+                temperature: 0.7
             })
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-            console.error("Detaylı Hata:", data);
-            return `Hata: ${data.error.message} (Kod: ${response.status})`;
-        }
-
         return data.choices[0].message.content;
     } catch (error) {
-        console.error("network error:", error);
-        return "network error error code 678";
+        return "Network error!";
     }
 }
 
+// Gönderme Fonksiyonu
 async function handleSend() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Kullanıcı mesajı
     addMessage(text, 'user');
     userInput.value = '';
 
-    // Yükleniyor mesajı
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'ai-msg';
-    loadingDiv.innerText = "I am thinking...";
+    loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
     
     const response = await getAIResponse(text);
-    
-    // Yükleniyor yazısını gerçek cevapla değiştir
     loadingDiv.innerText = response;
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
@@ -76,6 +63,4 @@ function addMessage(text, role) {
 }
 
 sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSend();
-});
+userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
