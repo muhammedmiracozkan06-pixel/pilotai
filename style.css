@@ -1,36 +1,116 @@
-/* Header'ı hizalayalım */
-header {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    padding: 10px 20px;
-    background: #1e293b;
-    color: white;
+/* Genel Ayarlar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Giriş alanını toparlayalım */
-.input-area {
+body {
+    background-color: #0f172a; /* Karanlık tema */
+    height: 100vh;
     display: flex;
-    gap: 10px; /* Buton ve input arası boşluk */
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+#app-container {
+    width: 100%;
+    max-width: 600px;
+    height: 90vh;
+    background: #1e293b;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Header - Logo ve Model Seçimi */
+header {
+    padding: 15px 20px;
+    background: #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #475569;
+}
+
+.logo {
+    color: #22c55e;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#model-select {
     background: #0f172a;
+    color: #22c55e;
+    border: 1px solid #475569;
+    padding: 5px;
+    border-radius: 6px;
+    outline: none;
+}
+
+/* Sohbet Penceresi */
+#chat-window {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ai-msg, .user-msg {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 12px;
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.ai-msg {
+    background: #334155;
+    color: #f1f5f9;
+    align-self: flex-start;
+}
+
+.user-msg {
+    background: #22c55e;
+    color: white;
+    align-self: flex-end;
+}
+
+/* Giriş Alanı */
+.input-area {
+    padding: 15px;
+    background: #1e293b;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #334155;
 }
 
 #user-input {
-    flex: 1; /* Inputun bütün boşluğu kaplamasını sağlar */
-    padding: 10px;
+    flex: 1;
+    padding: 12px;
     border-radius: 8px;
     border: 1px solid #334155;
-    background: #1e293b;
+    background: #0f172a;
     color: white;
+    outline: none;
 }
 
 #send-btn {
     padding: 10px 20px;
-    border-radius: 8px;
     background: #22c55e;
     color: white;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    transition: 0.3s;
+}
+
+#send-btn:hover {
+    background: #16a34a;
 }
