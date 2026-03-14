@@ -25,7 +25,7 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "llama3-8b-8192",
+                model: "llama3-70b-8192",
                 messages: [
                     { role: "system", content: "Sen Pilot AI'sın. Arkadaş canlısı bir yardımcısın." },
                     { role: "user", content: prompt }
