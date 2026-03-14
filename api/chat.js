@@ -1,11 +1,8 @@
 export default async function handler(req, res) {
-    // Sadece POST isteklerine izin ver (Güvenlik için)
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-    const { prompt, model, userName } = req.body;
-    const apiKey = process.env.GROQ_API_KEY; // Vercel'deki gizli kasanızdan anahtarı alır
+    const { prompt, model, userName } = req.body; // script.js'den gelen modeli alıyoruz
+    const apiKey = process.env.GROQ_API_KEY;
 
     try {
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -15,11 +12,11 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: model || "llama-3.3-70b-versatile", 
+                model: model, // İşte burada artık sabit bir isim yok, senin seçtiğin model var! 🎯
                 messages: [
                     { 
                         role: "system", 
-                        content: `You are Pilot AI. Your developer is Wind Developers. Be helpful, friendly, and speak clearly. The user's name is ${userName || "User"}.` 
+                        content: `You are Pilot AI. Developed by Wind Developers. User: ${userName}` 
                     },
                     { role: "user", content: prompt }
                 ],
@@ -28,11 +25,8 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
-        
-        // Groq'dan gelen cevabı direkt ön tarafa (script.js'e) gönderir
         res.status(200).json(data);
     } catch (error) {
-        console.error("Backend Error:", error);
-        res.status(500).json({ error: "API connection failed on server" });
+        res.status(500).json({ error: "API connection failed" });
     }
 }
