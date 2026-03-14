@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PilotAI</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+
+    <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:1000;">
+        <h2 style="color:white; margin-bottom:20px; font-family: sans-serif;">Pilot AI'ya Hoş Geldin! 👨‍✈️</h2>
+        <div id="g_id_onload"
+             data-client_id="64726463498-valtvmnoh0l88qsud6188dmpn54j5sqf.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
+    </div>
 
     <div id="app-container">
         <header>
