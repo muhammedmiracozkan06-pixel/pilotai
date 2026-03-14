@@ -1,5 +1,5 @@
 // API AYARLARI
-const GROQ_API_KEY = "BURAYA_API_KEYINI_YAPISTIR"; // Kendi key'ini buraya koy kanka
+const GROQ_API_KEY = "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"; // Kendi key'ini buraya koy kanka
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const chatWindow = document.getElementById('chat-window');
