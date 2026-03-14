@@ -36,25 +36,35 @@ const modelSelect = document.getElementById('model-select');
 // Request state control
 let isSending = false;
 
-// SECURE API CALL (Serverless)
+// DIRECT GROQ API CONFIGURATION
+const GROQ_API_KEY = "BURAYA_GROQ_KEYINI_YAZ";
+
 async function getAIResponse(prompt) {
     try {
-        const response = await fetch('/api/chat', {
+        // Doğrudan Groq API adresine istek atıyoruz
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${GROQ_API_KEY}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 model: modelSelect.value, 
-                prompt: prompt,
-                userName: window.userName || "User"
+                messages: [
+                    { 
+                        role: "system", 
+                        content: "You are Pilot AI. Developed by Wind Developers." 
+                    },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.7
             })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'API Error');
+            throw new Error(data.error?.message || 'API Error');
         }
 
         return data.choices[0].message.content;
