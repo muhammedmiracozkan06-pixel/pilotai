@@ -9,8 +9,8 @@
 </head>
 <body>
 
-    <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:1000;">
-        <h2 style="color:white; margin-bottom:20px; font-family: sans-serif;">Pilot AI'ya Hoş Geldin! 👨‍✈️</h2>
+    <div id="login-overlay">
+        <h2>Pilot AI'ya Hoş Geldin! 👨‍✈️</h2>
         <div id="g_id_onload"
              data-client_id="64726463498-valtvmnoh0l88qsud6188dmpn54j5sqf.apps.googleusercontent.com"
              data-callback="handleCredentialResponse">
@@ -26,11 +26,15 @@
                 <option value="qwen/qwen3-32b">Qwen3 </option>
                 <option value="groq/compound">groq compound </option>
             </select>
+            <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+                <span id="user-name" style="color: white; font-size: 12px;"></span>
+                <img id="user-pic" src="" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #22c55e;">
+            </div>
             <div class="status-dot"></div>
         </header>
 
         <div id="chat-window">
-            <div class="ai-msg">How are you today?</div>
+            <div class="ai-msg">Selam Mirac! Oturum açıldı, uçuşa hazırız. ✨</div>
         </div>
 
         <div class="input-area">
