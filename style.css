@@ -1,25 +1,36 @@
+/* Header'ı hizalayalım */
 header {
-    padding: 15px 20px;
-    background: #334155;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     align-items: center;
-    font-weight: bold;
+    padding: 10px 20px;
+    background: #1e293b;
+    color: white;
 }
 
-/* Seçim Kutusu Stili */
-#model-select {
+/* Giriş alanını toparlayalım */
+.input-area {
+    display: flex;
+    gap: 10px; /* Buton ve input arası boşluk */
+    padding: 20px;
     background: #0f172a;
-    color: #22c55e;
-    border: 1px solid #475569;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    outline: none;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
-#model-select:hover {
-    border-color: #22c55e;
+#user-input {
+    flex: 1; /* Inputun bütün boşluğu kaplamasını sağlar */
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: white;
+}
+
+#send-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: #22c55e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
 }
