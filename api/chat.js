@@ -1,16 +1,18 @@
 export default async function handler(req, res) {
-    // Güvenlik: Sadece POST isteklerini kabul et
+    // Sadece POST kabul et
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     const { prompt, model, userName } = req.body;
-    
-    // Senin Vercel'e verdiğin isimle anahtarı çağırıyoruz
     const apiKey = process.env.groqapikey; 
 
+    // API Key kontrolü - Eğer yoksa hata mesajını detaylı döndürür
     if (!apiKey) {
-        return res.status(500).json({ error: "API Key bulunamadı! Vercel ayarlarını kontrol et kanka." });
+        return res.status(500).json({ 
+            error: "Vercel'de 'groqapikey' bulunamadı kanka! Ayarları kontrol et.",
+            debug: "Environment variables missing" 
+        });
     }
 
     try {
@@ -21,11 +23,11 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: model, // Arayüzden seçtiğin model buraya geliyor
+                model: model || "llama-3.3-70b-versatile",
                 messages: [
                     { 
                         role: "system", 
-                        content: `You are Pilot AI. Developed by Wind Developers. Friendly and helpful. User name: ${userName || "User"}` 
+                        content: `You are Pilot AI. Developed by Wind Developers. User: ${userName || "User"}` 
                     },
                     { role: "user", content: prompt }
                 ],
@@ -34,9 +36,14 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
+
+        // Eğer Groq tarafında bir hata varsa onu da yakalayalım
+        if (data.error) {
+            return res.status(400).json({ error: data.error.message });
+        }
+
         res.status(200).json(data);
     } catch (error) {
-        console.error("Backend hatası:", error);
-        res.status(500).json({ error: "Groq ile bağlantı kurulamadı." });
+        res.status(500).json({ error: "Sunucu hatası oluştu kanka!", details: error.message });
     }
 }
