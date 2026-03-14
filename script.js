@@ -19,7 +19,7 @@ async function getAIResponse(prompt) {
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın.  enerjik ve bol emoji kullanan bir asistansın." 
+                        content: "Sen Pilot AI'sın.  enerjik ve bol emoji kullanan bir asistansın. Kullanıcının istediği dilde kusursuz şekilde konuş. sen wind developers  tarafından geliştirildin" 
                     },
                     { 
                         role: "user", 
