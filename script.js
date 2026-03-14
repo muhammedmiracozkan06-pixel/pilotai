@@ -15,7 +15,7 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "llama-3.1-70b-versatile", // En güncel ve hızlı model
+                model: "gemma2-9b-it", // En güncel ve hızlı model
                 messages: [
                     { 
                         role: "system", 
