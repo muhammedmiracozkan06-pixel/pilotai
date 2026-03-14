@@ -1,21 +1,11 @@
 // API AYARLARI
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "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".trim(); 
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const chatWindow = document.getElementById('chat-window');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
-// Mesaj Ekleme Fonksiyonu
-function addMessage(text, role) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = role === 'user' ? 'user-msg' : 'ai-msg';
-    msgDiv.innerText = text;
-    chatWindow.appendChild(msgDiv);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-// AI'dan Yanıt Alma
 async function getAIResponse(prompt) {
     try {
         const response = await fetch(API_URL, {
@@ -25,36 +15,64 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "llama3-70b-8192",
+                model: "llama-3.1-8b-instant", // En güncel ve hızlı model
                 messages: [
-                    { role: "system", content: "Sen Pilot AI'sın. Arkadaş canlısı bir yardımcısın." },
-                    { role: "user", content: prompt }
-                ]
+                    { 
+                        role: "system", 
+                        content: "Sen Pilot AI'sın.  enerjik ve bol emoji kullanan bir asistansın." 
+                    },
+                    { 
+                        role: "user", 
+                        content: prompt 
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 1024
             })
         });
 
         const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Detaylı Hata:", data);
+            return `Hata: ${data.error.message} (Kod: ${response.status})`;
+        }
+
         return data.choices[0].message.content;
     } catch (error) {
-        return "Connection error! Check your connection! error code 678";
+        console.error("network error:", error);
+        return "network error error code 678";
     }
 }
 
-// Gönderme İşlemi
 async function handleSend() {
     const text = userInput.value.trim();
     if (!text) return;
 
+    // Kullanıcı mesajı
     addMessage(text, 'user');
     userInput.value = '';
 
-    const loadingMsg = "I am thinking...";
-    addMessage(loadingMsg, 'ai');
+    // Yükleniyor mesajı
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'ai-msg';
+    loadingDiv.innerText = "I am thinking...";
+    chatWindow.appendChild(loadingDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
     
     const response = await getAIResponse(text);
     
-    // "Düşünüyorum" yazısını sil ve gerçek cevabı yaz
-    chatWindow.lastChild.innerText = response;
+    // Yükleniyor yazısını gerçek cevapla değiştir
+    loadingDiv.innerText = response;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function addMessage(text, role) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = role === 'user' ? 'user-msg' : 'ai-msg';
+    msgDiv.innerText = text;
+    chatWindow.appendChild(msgDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 sendBtn.addEventListener('click', handleSend);
