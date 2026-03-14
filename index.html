@@ -10,7 +10,7 @@
 <body>
 
     <div id="login-overlay">
-        <h2>Pilot AI'ya Hoş Geldin! 👨‍✈️</h2>
+        <h2>I am Pilot Aİ</h2>
         <div id="g_id_onload"
              data-client_id="64726463498-valtvmnoh0l88qsud6188dmpn54j5sqf.apps.googleusercontent.com"
              data-callback="handleCredentialResponse">
@@ -21,21 +21,22 @@
     <div id="app-container">
         <header>
             <div class="logo">Pilot AI</div>
-            <select id="model-select">
-                <option value="openai/gpt-oss-safeguard-20b">GPT 20B </option>
-                <option value="qwen/qwen3-32b">Qwen3 </option>
-                <option value="groq/compound">groq compound </option>
-            </select>
-            <div id="user-info" style="display: none; align-items: center; gap: 10px;">
-                <span id="user-name" style="color: white; font-size: 12px;"></span>
-                <img id="user-pic" src="" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #22c55e;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <select id="model-select">
+                    <option value="openai/gpt-oss-safeguard-20b">GPT 20B </option>
+                    <option value="qwen/qwen3-32b">Qwen3 </option>
+                    <option value="groq/compound">groq compound </option>
+                </select>
+                
+                <div id="user-info" style="display: none; align-items: center; gap: 8px;">
+                    <span id="user-name" style="color: white; font-size: 13px; font-weight: 500;"></span>
+                    <img id="user-pic" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #22c55e;">
+                </div>
             </div>
-            <div class="status-dot"></div>
         </header>
 
         <div id="chat-window">
-            <div class="ai-msg">Selam Mirac! Oturum açıldı, uçuşa hazırız. ✨</div>
-        </div>
+            </div>
 
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Ask pilot...">
