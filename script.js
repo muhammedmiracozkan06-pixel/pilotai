@@ -37,7 +37,8 @@ const modelSelect = document.getElementById('model-select');
 let isSending = false;
 
 // DIRECT GROQ API CONFIGURATION
-const GROQ_API_KEY = "BURAYA_GROQ_KEYINI_YAZ";
+const GROQ_API_KEY = "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
+";
 
 async function getAIResponse(prompt) {
     try {
