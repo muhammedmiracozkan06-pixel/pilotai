@@ -1,3 +1,21 @@
+/* Genel Ayarlar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* GİRİŞ EKRANI - EN ÖNEMLİ KISIM */
 #login-overlay {
     position: fixed;
     top: 0;
@@ -9,12 +27,104 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999; /* Diğer her şeyin üstünde */
     transition: opacity 0.5s ease;
 }
 
 #login-overlay h2 {
     color: white;
-    font-family: sans-serif;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+#app-container {
+    width: 95%;
+    max-width: 800px;
+    height: 90vh;
+    background: #1e293b;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+header {
+    padding: 15px 20px;
+    background: #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #22c55e;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+#model-select {
+    background: #0f172a;
+    color: white;
+    border: 1px solid #475569;
+    padding: 5px 10px;
+    border-radius: 6px;
+    outline: none;
+}
+
+#chat-window {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ai-msg, .user-msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.ai-msg {
+    background: #334155;
+    color: #f1f5f9;
+    align-self: flex-start;
+}
+
+.user-msg {
+    background: #22c55e;
+    color: white;
+    align-self: flex-end;
+}
+
+.input-area {
+    padding: 20px;
+    background: #1e293b;
+    display: flex;
+    gap: 12px;
+    border-top: 1px solid #334155;
+}
+
+#user-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+    outline: none;
+}
+
+#send-btn {
+    padding: 10px 25px;
+    background: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
