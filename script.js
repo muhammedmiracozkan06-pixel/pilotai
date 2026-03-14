@@ -15,7 +15,7 @@ function handleCredentialResponse(response) {
     window.userName = responsePayload.given_name;
 
     // 3. İlk selamlama mesajını ekle
-    addMessage("Selam " + window.userName + "! Oturumun başarıyla açıldı. Bugün ne üzerine çalışıyoruz? ✨", 'ai');
+    addMessage("hello " + window.userName + "your session has been successfully opened.✨", 'ai');
 }
 
 function decodeJwtResponse(token) {
@@ -49,7 +49,7 @@ async function getAIResponse(prompt) {
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName || "Mirac") + ". Dilleri düzgün konuş ve arkadaş canlısı ol. Wind Developers tarafından geliştirildin." 
+                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName ||) + ". Dilleri düzgün konuş ve arkadaş canlısı ol. Wind Developers tarafından geliştirildin." 
                     },
                     { role: "user", content: prompt }
                 ],
