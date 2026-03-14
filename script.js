@@ -1,3 +1,24 @@
+// GOOGLE AUTH FONKSİYONLARI (Giriş yapınca ekranın kapanması için)
+function handleCredentialResponse(response) {
+    const responsePayload = decodeJwtResponse(response.credential);
+    console.log("Giriş Başarılı: " + responsePayload.name);
+    
+    // Giriş ekranını gizle
+    document.getElementById('login-overlay').style.display = 'none';
+    
+    // İstersen kullanıcının adını bir değişkene atabilirsin
+    window.userName = responsePayload.given_name;
+}
+
+function decodeJwtResponse(token) {
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+
 // API AYARLARI
 const GROQ_API_KEY = "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"; // Kendi key'ini buraya koy kanka
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
@@ -16,7 +37,6 @@ async function getAIResponse(prompt) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                // ARTIK MODELİ BURADAN OKUYOR:
                 model: modelSelect.value, 
                 messages: [
                     { 
