@@ -1,21 +1,21 @@
-// GOOGLE AUTH İŞLEMLERİ
+// GOOGLE AUTH OPERATIONS
 function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
     
-    // 1. Giriş ekranını kaldır
+    // 1. Remove login overlay
     const overlay = document.getElementById('login-overlay');
     overlay.style.opacity = '0';
     setTimeout(() => overlay.style.display = 'none', 500);
 
-    // 2. Profil bilgilerini üst bara ekle
+    // 2. Add profile info to header
     document.getElementById('user-name').innerText = responsePayload.given_name;
     document.getElementById('user-pic').src = responsePayload.picture;
     document.getElementById('user-info').style.display = 'flex';
 
     window.userName = responsePayload.given_name;
 
-    // 3. İlk selamlama mesajını ekle
-    addMessage("hello " + window.userName + "your session has been successfully opened.✨", 'ai');
+    // 3. Add initial welcome message
+    addMessage("Hello " + window.userName + "! Login successful. How can I help you today? ✨", 'ai');
 }
 
 function decodeJwtResponse(token) {
@@ -27,7 +27,7 @@ function decodeJwtResponse(token) {
     return JSON.parse(jsonPayload);
 }
 
-// API AYARLARI
+// API SETTINGS
 const GROQ_API_KEY = "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";
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -49,7 +49,7 @@ async function getAIResponse(prompt) {
                 messages: [
                     { 
                         role: "system", 
-                        content: "Sen Pilot AI'sın. Karşındaki kişi " + (window.userName ||) + ". Dilleri düzgün konuş ve arkadaş canlısı ol. Wind Developers tarafından geliştirildin." 
+                        content: "You are Pilot AI. Your developer is Wind Developers. Be helpful, friendly, and speak clearly. Use the user's name if available." 
                     },
                     { role: "user", content: prompt }
                 ],
@@ -59,10 +59,11 @@ async function getAIResponse(prompt) {
         const data = await response.json();
         return data.choices[0].message.content;
     } catch (error) {
-        return "Network error! Lütfen bağlantını kontrol et kanka.";
+        return "Network error! Please check your connection.";
     }
 }
 
+// Send Function
 async function handleSend() {
     const text = userInput.value.trim();
     if (!text) return;
