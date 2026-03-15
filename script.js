@@ -1,55 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilot AI - Wind Developers</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-</head>
-<body>
-    <div id="login-overlay">
-        <div class="login-box">
-            <h1>Pilot AI</h1>
-            <p>Please login with Google to continue</p>
-            <div id="buttonDiv"></div>
-        </div>
-    </div>
+// Wind Developers - Pilot AI 🚀
 
-    <div class="app-container">
-        <header>
-            <div class="logo">Pilot AI</div>
-            <div id="user-info" style="display: none;">
-                <span id="user-name"></span>
-                <img id="user-pic" src="" alt="Profile">
-            </div>
-            <select id="model-select">
-                <option value="llama-3.3-70b-versatile">Llama 3.3 70B</option>
-                <option value="llama-3.1-8b-instant">Llama 3.1 8B</option>
-                <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
-            </select>
-        </header>
+const chatWindow = document.getElementById('chat-window');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const modelSelect = document.getElementById('model-select');
 
-        <div id="chat-window"></div>
+let isSending = false;
 
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type a message...">
-            <button id="send-btn">Send</button>
-        </div>
-    </div>
+// API CONFIGURATION
+const GROQ_API_KEY = "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";
 
-    <script>
-        window.onload = function () {
-            google.accounts.id.initialize({
-                client_id: "64726463498-valtvmnoh0l88qsud6188dmpn54j5sqf.apps.googleusercontent.com",
-                callback: handleCredentialResponse
-            });
-            google.accounts.id.renderButton(
-                document.getElementById("buttonDiv"),
-                { theme: "outline", size: "large" }
-            );
-        }
-    </script>
-    <script src="script.js"></script>
-</body>
-</html>
+async function getAIResponse(prompt) {
+    try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${GROQ_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: modelSelect.value, 
+                messages: [
+                    { role: "system", content: "You are Pilot AI. Developed by Wind Developers." },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.7
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || 'API Error');
+        return data.choices[0].message.content;
+    } catch (error) {
+        console.error("Technical Error:", error);
+        return "Connection Error: " + error.message;
+    }
+}
+
+async function handleSend() {
+    const text = userInput.value.trim();
+    if (!text || isSending) return;
+
+    isSending = true;
+    sendBtn.disabled = true;
+
+    addMessage(text, 'user-msg');
+    userInput.value = '';
+
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'ai-msg';
+    loadingDiv.innerText = "...";
+    chatWindow.appendChild(loadingDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    
+    const response = await getAIResponse(text);
+    loadingDiv.innerText = response;
+    
+    isSending = false;
+    sendBtn.disabled = false;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function addMessage(text, className) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = className;
+    msgDiv.innerText = text;
+    chatWindow.appendChild(msgDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keypress', (e) => { 
+    if (e.key === 'Enter') handleSend(); 
+});
