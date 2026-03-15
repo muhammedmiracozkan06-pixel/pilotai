@@ -8,7 +8,7 @@ const modelSelect = document.getElementById('model-select');
 let isSending = false;
 
 // API CONFIGURATION
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = "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";
 
 async function getAIResponse(prompt) {
     try {
