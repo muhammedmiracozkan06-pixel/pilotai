@@ -21,7 +21,7 @@ async function getAIResponse(prompt) {
             body: JSON.stringify({
                 model: modelSelect.value, 
                 messages: [
-                    { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin." },
+                    { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin.Ayrıca ala kendi veritabanında olan adını kullanma senin adın pilot ai başka birşey değil. winddevelopers tarafından geliştirildin." },
                     { role: "user", content: prompt }
                 ],
                 temperature: 0.7
