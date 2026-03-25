@@ -15,22 +15,23 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
-        if (selectedModel.includes("gemini")) {
-            // URL yapısı - v1beta en stabil olanı
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+        if (selectedModel.indexOf("gemini") !== -1) {
+            // URL'yi en güvenli şekilde birleştiriyoruz
+            const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/";
+            const fullUrl = baseUrl + selectedModel + ":generateContent?key=" + GEMINI_API_KEY;
             
-            const response = await fetch(url, {
+            const response = await fetch(fullUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen Pilot AI sistemisin. Wind Developers tarafindan gelistirildin. Soru: ${prompt}` }]
+                        parts: [{ text: "Sen Pilot AI sistemisin. Wind Developers tarafindan gelistirildin. Soru: " + prompt }]
                     }]
                 })
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || "Gemini API Hatası");
+            if (!response.ok) throw new Error(data.error?.message || "Gemini Hatasi");
             
             return data.candidates[0].content.parts[0].text;
         } 
@@ -38,7 +39,7 @@ async function getAIResponse(prompt) {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${GROQ_API_KEY}`,
+                    'Authorization': "Bearer " + GROQ_API_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -52,7 +53,7 @@ async function getAIResponse(prompt) {
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || "Groq API Hatası");
+            if (!response.ok) throw new Error(data.error?.message || "Groq Hatasi");
             return data.choices[0].message.content;
         }
     } catch (error) {
@@ -93,8 +94,8 @@ function addMessage(text, className) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Event Listeners
+// Buton baglantilari
 sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keypress', (e) => { 
+userInput.addEventListener('keypress', function(e) { 
     if (e.key === 'Enter') handleSend(); 
-});
+});        
