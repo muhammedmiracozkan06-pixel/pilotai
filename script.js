@@ -16,6 +16,7 @@ async function getAIResponse(prompt) {
     
     try {
         if (selectedModel.includes("gemini")) {
+            // URL yapısı - v1beta en stabil olanı
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
@@ -23,13 +24,13 @@ async function getAIResponse(prompt) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Soru: ${prompt}` }]
+                        parts: [{ text: `Sen Pilot AI sistemisin. Wind Developers tarafindan gelistirildin. Soru: ${prompt}` }]
                     }]
                 })
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || 'Gemini API Hatası');
+            if (!response.ok) throw new Error(data.error?.message || "Gemini API Hatası");
             
             return data.candidates[0].content.parts[0].text;
         } 
@@ -43,7 +44,7 @@ async function getAIResponse(prompt) {
                 body: JSON.stringify({
                     model: selectedModel, 
                     messages: [
-                        { role: "system", content: "Sen Pilot AI'sın. Seni Wind Developers geliştirdi." },
+                        { role: "system", content: "Sen Pilot AI sistemisin. Wind Developers tarafindan gelistirildin." },
                         { role: "user", content: prompt }
                     ],
                     temperature: 0.7
@@ -51,12 +52,12 @@ async function getAIResponse(prompt) {
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || 'Groq API Hatası');
+            if (!response.ok) throw new Error(data.error?.message || "Groq API Hatası");
             return data.choices[0].message.content;
         }
     } catch (error) {
         console.error("Technical Error:", error);
-        return "⚠️ Hata: " + error.message;
+        return "Baglanti Hatasi: " + error.message;
     }
 }
 
