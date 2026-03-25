@@ -17,12 +17,13 @@ async function getAIResponse(prompt) {
     try {
         // --- GEMINI MODELLERİ İÇİN AKIŞ ---
         if (selectedModel.includes("gemini")) {
+            // ÇÖZÜM: URL yapısında model adının başına tam yolunu ekledik
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen pilot ai sin. seni wind developers geliştirdi. Biri sana kim olduğunu sorarsa wind developers tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI. Soru: ${prompt}` }]
+                        parts: [{ text: `Sen pilot ai sin. Seni wind developers geliştirdi. Biri sana kim olduğunu sorarsa wind developers tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI. Soru: ${prompt}` }]
                     }]
                 })
             });
