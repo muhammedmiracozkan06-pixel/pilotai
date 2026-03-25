@@ -15,15 +15,17 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
-        // --- GEMINI MODELLERİ İÇİN AKIŞ ---
+        // --- GEMINI MODELLERİ İÇİN AKIŞ (Pilot 7 Beta) ---
         if (selectedModel.includes("gemini")) {
-            // ÇÖZÜM: URL yapısında model adının başına tam yolunu ekledik
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
+            // HATA ÇÖZÜMÜ: URL'nin içine "models/" ekledik
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen pilot ai sin. Seni wind developers geliştirdi. Biri sana kim olduğunu sorarsa wind developers tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI. Soru: ${prompt}` }]
+                        parts: [{ text: `Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Birisi sana kim olduğunu sorarsa "Wind Developers tarafından geliştirilen bir yapay zekayım" diyeceksin. Soru: ${prompt}` }]
                     }]
                 })
             });
@@ -34,7 +36,7 @@ async function getAIResponse(prompt) {
             return data.candidates[0].content.parts[0].text;
         } 
         
-        // --- GROQ MODELLERİ İÇİN AKIŞ ---
+        // --- GROQ MODELLERİ İÇİN AKIŞ (Diğerleri) ---
         else {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
@@ -45,7 +47,7 @@ async function getAIResponse(prompt) {
                 body: JSON.stringify({
                     model: selectedModel, 
                     messages: [
-                        { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI. Winddevelopers tarafından geliştirildin." },
+                        { role: "system", content: "Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Wind Developers tarafından geliştirilen bir yapay zekayım diyeceksin." },
                         { role: "user", content: prompt }
                     ],
                     temperature: 0.7
