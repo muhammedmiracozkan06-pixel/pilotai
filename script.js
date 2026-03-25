@@ -15,10 +15,9 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
-        // Eğer seçilen model Gemini ise (HTML'de value "gemini-1.5-flash" gibi olmalı)
+        // --- GEMINI MODELLERİ İÇİN AKIŞ ---
         if (selectedModel.includes("gemini")) {
-            // URL'yi v1 olarak güncelledik ve model yapısını düzelttik
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -29,12 +28,12 @@ async function getAIResponse(prompt) {
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || 'Gemini API Error');
+            if (!response.ok) throw new Error(data.error?.message || 'Gemini API Hatası');
             
             return data.candidates[0].content.parts[0].text;
         } 
         
-        // Groq API Akışı
+        // --- GROQ MODELLERİ İÇİN AKIŞ ---
         else {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
@@ -45,7 +44,7 @@ async function getAIResponse(prompt) {
                 body: JSON.stringify({
                     model: selectedModel, 
                     messages: [
-                        { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI." },
+                        { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin. İsmin Pilot AI. Winddevelopers tarafından geliştirildin." },
                         { role: "user", content: prompt }
                     ],
                     temperature: 0.7
@@ -53,7 +52,7 @@ async function getAIResponse(prompt) {
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || 'Groq API Error');
+            if (!response.ok) throw new Error(data.error?.message || 'Groq API Hatası');
             return data.choices[0].message.content;
         }
     } catch (error) {
@@ -94,6 +93,7 @@ function addMessage(text, className) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+// Event Listeners
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keypress', (e) => { 
     if (e.key === 'Enter') handleSend(); 
