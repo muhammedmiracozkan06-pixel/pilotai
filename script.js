@@ -1,26 +1,25 @@
 // Wind Developers - Pilot AI 🚀
 
-const chatWindow = document.getElementById('chat-window');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const modelSelect = document.getElementById('model-select');
+var chatWindow = document.getElementById('chat-window');
+var userInput = document.getElementById('user-input');
+var sendBtn = document.getElementById('send-btn');
+var modelSelect = document.getElementById('model-select');
 
-let isSending = false;
+var isSending = false;
 
 // API KEYS
-const GROQ_API_KEY = "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";
-const GEMINI_API_KEY = "AIzaSyCdrlj-9KaeqK7ww0OsxM0Nkgk4hkpE5Ek";
+var GROQ_API_KEY = "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";
+var GEMINI_API_KEY = "AIzaSyCdrlj-9KaeqK7ww0OsxM0Nkgk4hkpE5Ek";
 
 async function getAIResponse(prompt) {
-    const selectedModel = modelSelect.value;
+    var selectedModel = modelSelect.value;
     
     try {
         if (selectedModel.indexOf("gemini") !== -1) {
-            // URL'yi en güvenli şekilde birleştiriyoruz
-            const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/";
-            const fullUrl = baseUrl + selectedModel + ":generateContent?key=" + GEMINI_API_KEY;
+            // URL yapisini en ilkel sekilde birlestirdik
+            var url = "https://generativelanguage.googleapis.com/v1beta/models/" + selectedModel + ":generateContent?key=" + GEMINI_API_KEY;
             
-            const response = await fetch(fullUrl, {
+            var response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -30,13 +29,13 @@ async function getAIResponse(prompt) {
                 })
             });
             
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || "Gemini Hatasi");
+            var data = await response.json();
+            if (!response.ok) throw new Error(data.error ? data.error.message : "API Hatasi");
             
             return data.candidates[0].content.parts[0].text;
         } 
         else {
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            var response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
                 headers: {
                     'Authorization': "Bearer " + GROQ_API_KEY,
@@ -52,18 +51,18 @@ async function getAIResponse(prompt) {
                 })
             });
             
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || "Groq Hatasi");
+            var data = await response.json();
+            if (!response.ok) throw new Error(data.error ? data.error.message : "API Hatasi");
             return data.choices[0].message.content;
         }
     } catch (error) {
-        console.error("Technical Error:", error);
+        console.error("Teknik Hata:", error);
         return "Baglanti Hatasi: " + error.message;
     }
 }
 
 async function handleSend() {
-    const text = userInput.value.trim();
+    var text = userInput.value.trim();
     if (!text || isSending) return;
 
     isSending = true;
@@ -72,13 +71,13 @@ async function handleSend() {
     addMessage(text, 'user-msg');
     userInput.value = '';
 
-    const loadingDiv = document.createElement('div');
+    var loadingDiv = document.createElement('div');
     loadingDiv.className = 'ai-msg';
     loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
     
-    const response = await getAIResponse(text);
+    var response = await getAIResponse(text);
     loadingDiv.innerText = response;
     
     isSending = false;
@@ -87,15 +86,15 @@ async function handleSend() {
 }
 
 function addMessage(text, className) {
-    const msgDiv = document.createElement('div');
+    var msgDiv = document.createElement('div');
     msgDiv.className = className;
     msgDiv.innerText = text;
     chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Buton baglantilari
+// Butonlari bagla
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keypress', function(e) { 
     if (e.key === 'Enter') handleSend(); 
-});        
+});
