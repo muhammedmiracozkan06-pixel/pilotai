@@ -1,81 +1,59 @@
 // Wind Developers - Pilot AI 🚀
 
-var chatWindow = document.getElementById('chat-window');
-var userInput = document.getElementById('user-input');
-var sendBtn = document.getElementById('send-btn');
-var modelSelect = document.getElementById('model-select');
+const chatWindow = document.getElementById('chat-window');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const modelSelect = document.getElementById('model-select');
 
-var isSending = false;
+let isSending = false;
 
-// API KEYS
-var GROQ_API_KEY = "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";
-var GEMINI_API_KEY = "AIzaSyCdrlj-9KaeqK7ww0OsxM0Nkgk4hkpE5Ek";
+// API CONFIGURATION
+const GROQ_API_KEY = "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";
 
 async function getAIResponse(prompt) {
-    var selectedModel = modelSelect.value;
-    
     try {
-        if (selectedModel.indexOf("gemini") !== -1) {
-            var url = "https://generativelanguage.googleapis.com/v1beta/models/" + selectedModel + ":generateContent?key=" + GEMINI_API_KEY;
-            
-            var response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }]
-                })
-            });
-            
-            var data = await response.json();
-            if (!response.ok) throw new Error(data.error ? data.error.message : "API Error");
-            
-            return data.candidates[0].content.parts[0].text;
-        } 
-        else {
-            var response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + GROQ_API_KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    model: selectedModel, 
-                    messages: [
-                        { role: "user", content: prompt }
-                    ],
-                    temperature: 0.7
-                })
-            });
-            
-            var data = await response.json();
-            if (!response.ok) throw new Error(data.error ? data.error.message : "API Error");
-            return data.choices[0].message.content;
-        }
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${GROQ_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: modelSelect.value, 
+                messages: [
+                    { role: "system", content: "Sen pilot ai sin. seni wind developers geliştirdi biri sana sen kimsin vb. sorarsa wind developer tarafından geliştirilen bir yapay zekayım diyeceksin.Ayrıca ala kendi veritabanında olan adını kullanma senin adın pilot ai başka birşey değil. winddevelopers tarafından geliştirildin." },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.7
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || 'API Error');
+        return data.choices[0].message.content;
     } catch (error) {
         console.error("Technical Error:", error);
-        return "Baglanti Hatasi: " + error.message;
+        return "Connection Error: " + error.message;
     }
 }
 
 async function handleSend() {
-    var text = userInput.value.trim();
+    const text = userInput.value.trim();
     if (!text || isSending) return;
 
     isSending = true;
     sendBtn.disabled = true;
 
-    addMessage(text, "user-msg");
-    userInput.value = "";
+    addMessage(text, 'user-msg');
+    userInput.value = '';
 
-    var loadingDiv = document.createElement("div");
-    loadingDiv.className = "ai-msg";
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'ai-msg';
     loadingDiv.innerText = "...";
     chatWindow.appendChild(loadingDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
     
-    var response = await getAIResponse(text);
+    const response = await getAIResponse(text);
     loadingDiv.innerText = response;
     
     isSending = false;
@@ -84,14 +62,14 @@ async function handleSend() {
 }
 
 function addMessage(text, className) {
-    var msgDiv = document.createElement("div");
+    const msgDiv = document.createElement('div');
     msgDiv.className = className;
     msgDiv.innerText = text;
     chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-sendBtn.addEventListener("click", handleSend);
-userInput.addEventListener("keypress", function(e) { 
-    if (e.key === "Enter") handleSend(); 
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keypress', (e) => { 
+    if (e.key === 'Enter') handleSend(); 
 });
