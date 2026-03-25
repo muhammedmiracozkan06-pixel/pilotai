@@ -15,9 +15,7 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
-        // --- GEMINI MODELLERİ İÇİN AKIŞ ---
         if (selectedModel.includes("gemini")) {
-            // URL yapısını en basit ve hatasız hale getirdim
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
@@ -25,7 +23,7 @@ async function getAIResponse(prompt) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Soru: ${prompt}` }]
+                        parts: [{ text: "Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Soru: " + prompt }]
                     }]
                 })
             });
@@ -35,8 +33,6 @@ async function getAIResponse(prompt) {
             
             return data.candidates[0].content.parts[0].text;
         } 
-        
-        // --- GROQ MODELLERİ İÇİN AKIŞ ---
         else {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
@@ -96,7 +92,7 @@ function addMessage(text, className) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Event Listeners (Bunlar butonun çalışmasını sağlar)
+// Event Listeners
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keypress', (e) => { 
     if (e.key === 'Enter') handleSend(); 
