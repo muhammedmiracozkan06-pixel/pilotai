@@ -16,6 +16,7 @@ async function getAIResponse(prompt) {
     
     try {
         if (selectedModel.includes("gemini")) {
+            // URL yapısı ve model yolu düzeltildi
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
