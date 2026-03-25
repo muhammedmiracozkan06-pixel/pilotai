@@ -18,7 +18,7 @@ async function getAIResponse(prompt) {
         // --- GEMINI MODELLERİ İÇİN AKIŞ (Pilot 7 Beta) ---
         if (selectedModel.includes("gemini")) {
             // HATA ÇÖZÜMÜ: URL'nin içine "models/" ekledik
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;`;
             
             const response = await fetch(url, {
                 method: 'POST',
