@@ -15,8 +15,8 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
+        // --- GEMINI AKIŞI ---
         if (selectedModel.includes("gemini")) {
-            // URL yapısı ve model yolu düzeltildi
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
@@ -34,6 +34,7 @@ async function getAIResponse(prompt) {
             
             return data.candidates[0].content.parts[0].text;
         } 
+        // --- GROQ AKIŞI ---
         else {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
