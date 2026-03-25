@@ -7,7 +7,7 @@ const modelSelect = document.getElementById('model-select');
 
 let isSending = false;
 
-// API KEYS
+// API KEYS (Keyleri kontrol et kanka, gerekirse yenisini al)
 const GROQ_API_KEY = "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";
 const GEMINI_API_KEY = "AIzaSyCdrlj-9KaeqK7ww0OsxM0Nkgk4hkpE5Ek";
 
@@ -17,26 +17,32 @@ async function getAIResponse(prompt) {
     try {
         // --- GEMINI MODELLERİ İÇİN AKIŞ (Pilot 7 Beta) ---
         if (selectedModel.includes("gemini")) {
-            // URL'yi doğrudan en stabil model olan gemini-1.5-flash-latest'a bağladık
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+            // URL'de model isminin başına kod içinde "models/" ekliyoruz, garanti olsun
+            const cleanModelName = selectedModel.includes("models/") ? selectedModel : `models/${selectedModel}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/${cleanModelName}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: `Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Birisi sana kim olduğunu sorarsa "Wind Developers tarafından geliştirilen bir yapay zekayım" diyeceksin. Soru: ${prompt}` }]
+                        parts: [{ text: `Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Soru: ${prompt}` }]
                     }]
                 })
             });
             
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error?.message || 'Gemini API Hatası');
+            
+            // Hata ayıklama için: Eğer cevap gelmezse sebebi konsola basar
+            if (!response.ok) {
+                console.error("Gemini Detaylı Hata:", data);
+                throw new Error(data.error?.message || 'API Hatası');
+            }
             
             return data.candidates[0].content.parts[0].text;
         } 
         
-        // --- GROQ MODELLERİ İÇİN AKIŞ (Diğerleri) ---
+        // --- GROQ MODELLERİ İÇİN AKIŞ ---
         else {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST',
@@ -47,7 +53,7 @@ async function getAIResponse(prompt) {
                 body: JSON.stringify({
                     model: selectedModel, 
                     messages: [
-                        { role: "system", content: "Sen Pilot AI'sın. Seni Wind Developers geliştirdi. Wind Developers tarafından geliştirilen bir yapay zekayım diyeceksin." },
+                        { role: "system", content: "Sen Pilot AI'sın. Seni Wind Developers geliştirdi." },
                         { role: "user", content: prompt }
                     ],
                     temperature: 0.7
@@ -59,8 +65,8 @@ async function getAIResponse(prompt) {
             return data.choices[0].message.content;
         }
     } catch (error) {
-        console.error("Technical Error:", error);
-        return "Bağlantı Hatası: " + error.message;
+        console.error("Teknik Hata:", error);
+        return "⚠️ Hata: " + error.message;
     }
 }
 
