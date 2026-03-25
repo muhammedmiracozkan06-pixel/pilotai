@@ -7,7 +7,7 @@ const modelSelect = document.getElementById('model-select');
 
 let isSending = false;
 
-// API KEYS (Keyleri kontrol et kanka, gerekirse yenisini al)
+// API KEYS
 const GROQ_API_KEY = "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";
 const GEMINI_API_KEY = "AIzaSyCdrlj-9KaeqK7ww0OsxM0Nkgk4hkpE5Ek";
 
@@ -15,11 +15,10 @@ async function getAIResponse(prompt) {
     const selectedModel = modelSelect.value;
     
     try {
-        // --- GEMINI MODELLERİ İÇİN AKIŞ (Pilot 7 Beta) ---
+        // --- GEMINI MODELLERİ İÇİN AKIŞ ---
         if (selectedModel.includes("gemini")) {
-            // URL'de model isminin başına kod içinde "models/" ekliyoruz, garanti olsun
-            const cleanModelName = selectedModel.includes("models/") ? selectedModel : `models/${selectedModel}`;
-            const url = `https://generativelanguage.googleapis.com/v1beta/${cleanModelName}:generateContent?key=${GEMINI_API_KEY}`;
+            // URL yapısını en basit ve hatasız hale getirdim
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -32,12 +31,7 @@ async function getAIResponse(prompt) {
             });
             
             const data = await response.json();
-            
-            // Hata ayıklama için: Eğer cevap gelmezse sebebi konsola basar
-            if (!response.ok) {
-                console.error("Gemini Detaylı Hata:", data);
-                throw new Error(data.error?.message || 'API Hatası');
-            }
+            if (!response.ok) throw new Error(data.error?.message || 'Gemini API Hatası');
             
             return data.candidates[0].content.parts[0].text;
         } 
@@ -65,7 +59,7 @@ async function getAIResponse(prompt) {
             return data.choices[0].message.content;
         }
     } catch (error) {
-        console.error("Teknik Hata:", error);
+        console.error("Technical Error:", error);
         return "⚠️ Hata: " + error.message;
     }
 }
@@ -102,7 +96,7 @@ function addMessage(text, className) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Event Listeners
+// Event Listeners (Bunlar butonun çalışmasını sağlar)
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keypress', (e) => { 
     if (e.key === 'Enter') handleSend(); 
